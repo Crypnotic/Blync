@@ -21,7 +21,6 @@ public class CommandLoader<S> {
     private final EchoTransformer<S> echoTransformer = new EchoTransformer<S>();
 
     @SneakyThrows
-    @SuppressWarnings("deprecation")
     public void register(Object command) {
         String name = getCommandName(command);
         String usage = getUsage(command);
@@ -62,7 +61,6 @@ public class CommandLoader<S> {
         }
     }
 
-    @SuppressWarnings("deprecation")
     public String execute(S source, String command, String[] args) {
         CommandWrapper<S> wrapper = commands.get(command);
         if (wrapper != null) {
@@ -73,6 +71,8 @@ public class CommandLoader<S> {
 
                 try {
                     executor.execute(source, new CommandContext(arguments));
+
+                    return ""; // Return empty string to be ignored
                 } catch (CommandExitException exception) {
                     return exception.getMessage();
                 }
@@ -82,7 +82,6 @@ public class CommandLoader<S> {
         } else {
             return ""; // TODO: Return unknown command
         }
-        return "";
     }
 
     public void addCommandSourceTransformer(Class<?> resultClass, CommandSourceTransformer<S> transformer) {

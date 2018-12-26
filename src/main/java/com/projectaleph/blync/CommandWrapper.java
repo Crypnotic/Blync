@@ -16,12 +16,10 @@ public class CommandWrapper<S> {
 
     private Map<String, CommandExecutor<S>> subcommands = new ConcurrentHashMap<String, CommandExecutor<S>>();
 
-    @Deprecated
     public CommandExecutor<S> getSubcommand(String name) {
         return subcommands.get(name);
     }
 
-    @Deprecated
     public void add(String commandName, CommandExecutor<S> executor, String... aliases) {
         if (commandName == null) {
             throw new NullPointerException("command(" + this.name + ")");
