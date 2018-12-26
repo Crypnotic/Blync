@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.projectaleph.blync.CommandResult.Reason;
 import com.projectaleph.blync.annotation.Aliases;
 import com.projectaleph.blync.annotation.Command;
 import com.projectaleph.blync.annotation.Usage;
@@ -61,7 +62,7 @@ public class CommandLoader<S> {
         }
     }
 
-    public String execute(S source, String command, String[] args) {
+    public CommandResult execute(S source, String command, String[] args) {
         CommandWrapper<S> wrapper = commands.get(command);
         if (wrapper != null) {
             CommandExecutor<S> executor = wrapper.getSubcommand(args[0].toLowerCase());
@@ -72,15 +73,15 @@ public class CommandLoader<S> {
                 try {
                     executor.execute(source, new CommandContext(arguments));
 
-                    return ""; // Return empty string to be ignored
+                    return CommandResult.SUCCESS;
                 } catch (CommandExitException exception) {
-                    return exception.getMessage();
+                    return new CommandResult(Reason.ERROR, exception.getMessage());
                 }
             } else {
-                return ""; // TODO: Return CommandWrapper usage
+                return new CommandResult(Reason.USAGE, wrapper.getUsage());
             }
         } else {
-            return ""; // TODO: Return unknown command
+            return new CommandResult(Reason.UNKNOWN_COMMAND, command);
         }
     }
 
